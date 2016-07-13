@@ -7,6 +7,7 @@
 --
 --   See documentation for module header in Data.IntSet.Buddy.
 --
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE CPP #-}
 
 #if __GLASGOW_HASKELL__
@@ -125,6 +126,7 @@ import qualified Data.List as L
 import Data.Monoid
 import Data.Ord
 import Data.Word
+import GHC.Generics hiding ((:*:))
 
 
 -- machine specific properties of basic types
@@ -203,6 +205,7 @@ data IntSet
 #if defined(__GLASGOW_HASKELL__)
     , Typeable, Data
 #endif
+    , Generic
     )
 
 {--------------------------------------------------------------------
