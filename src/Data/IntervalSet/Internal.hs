@@ -123,9 +123,7 @@ import Data.Bits as Bits
 import Data.Bits.Extras
 import Data.Data
 import qualified Data.List as L
-import Data.Monoid
 import Data.Ord
-import Data.Word
 import GHC.Generics hiding ((:*:))
 
 
@@ -1148,7 +1146,7 @@ unstream = fromList
 --
 map :: (Key -> Key) -> IntSet -> IntSet
 map f = unstream . L.map f . stream
-{-# INLINE map #-}
+{-# INLINE[2] map #-}
 
 -- | /O(n)/.  Fold the element using the given right associative
 --   binary operator.
@@ -1186,11 +1184,16 @@ listFin p m = [p..(p + m) - 1]
   List conversions
 --------------------------------------------------------------------}
 
+
+comp' :: (b -> c) -> (a -> b) -> a -> c
+comp' = (.)
+{-# INLINE[2] comp' #-}
+
 {-# RULES
   "IntSet/toList/fromList"      forall x. fromList (toList x) = x;
-  "IntSet/toList/fromList/comp"           fromList . toList   = id;
+  "IntSet/toList/fromList/comp"           fromList `comp'` toList   = id;
   "IntSet/fromList/toList"      forall x. toList (fromList x) = x;
-  "IntSet/fromList/toList/comp"           toList . fromList   = id
+  "IntSet/fromList/toList/comp"           toList `comp'` fromList   = id
   #-}
 
 -- | /O(n * min(W, n))/ or /O(n)/.
@@ -1520,7 +1523,7 @@ finMask m = m `shiftR` 1
 ----------------------------------------------------------------------}
 
 suffixBitMask :: Int
-suffixBitMask = bitSize (undefined :: Word) - 1
+suffixBitMask = finiteBitSize (undefined :: Word) - 1
 {-# INLINE suffixBitMask #-}
 
 prefixBitMask :: Int
